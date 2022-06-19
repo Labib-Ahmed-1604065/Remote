@@ -19,6 +19,8 @@ import java.io.InputStream;
 import java.util.UUID;
 
 public class Controlling extends Activity {
+    private static final int SYSTEM_ALERT_WINDOW_PERMISSION = 2084;
+
     private static final String TAG = "BlueTest5-Controlling";
     private int mMaxChars = 50000;//Default//change this to string..........
     private UUID mDeviceUUID;
@@ -42,11 +44,11 @@ public class Controlling extends Activity {
 
 
     private ProgressDialog progressDialog;
-    Button btnForward, btnBackward, btnLeft, btnRight, btnGoUp, btnGoDown, btnStop;
+    Button btnForward, btnBackward, btnLeft, btnRight, btnGoUp, btnGoDown, btnStop, btnFloatingWidget;
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {//work at 164
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_controlling);
 
@@ -59,9 +61,7 @@ public class Controlling extends Activity {
         btnGoUp =(Button)findViewById(R.id.goUp);
         btnGoDown =(Button)findViewById(R.id.goDown);
         btnStop =(Button)findViewById(R.id.stop);
-
-
-
+        btnFloatingWidget =(Button)findViewById(R.id.buttonCreateWidget);
 
         Intent intent = getIntent();
         Bundle b = intent.getExtras();
@@ -70,10 +70,6 @@ public class Controlling extends Activity {
         mMaxChars = b.getInt(MainActivity.BUFFER_SIZE);
 
         Log.d(TAG, "Ready");
-
-
-
-
 
         btnForward.setOnClickListener(new View.OnClickListener()
         {
@@ -161,6 +157,13 @@ public class Controlling extends Activity {
                     e.printStackTrace();
                 }
             }});
+
+        btnFloatingWidget.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
     }
 
     private class ReadInput implements Runnable {
@@ -198,26 +201,20 @@ public class Controlling extends Activity {
                         /*
                          * If checked then receive text, better design would probably be to stop thread if unchecked and free resources, but this is a quick fix
                          */
-
-
-
                     }
                     Thread.sleep(500);
                 }
             } catch (IOException e) {
-// TODO Auto-generated catch block
+                    // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (InterruptedException e) {
-// TODO Auto-generated catch block
+                    // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-
         }
-
         public void stop() {
             bStop = true;
         }
-
     }
 
     private class DisConnectBT extends AsyncTask<Void, Void, Void> {
@@ -227,7 +224,7 @@ public class Controlling extends Activity {
         }
 
         @Override
-        protected Void doInBackground(Void... params) {//cant inderstand these dotss
+        protected Void doInBackground(Void... params) {//can't understand these dots
 
             if (mReadThread != null) {
                 mReadThread.stop();
@@ -240,10 +237,9 @@ public class Controlling extends Activity {
             try {
                 mBTSocket.close();
             } catch (IOException e) {
-// TODO Auto-generated catch block
+                    // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-
             return null;
         }
 
@@ -255,7 +251,6 @@ public class Controlling extends Activity {
                 finish();
             }
         }
-
     }
 
     private void msg(String s) {
@@ -297,9 +292,7 @@ public class Controlling extends Activity {
 
         @Override
         protected void onPreExecute() {
-
             progressDialog = ProgressDialog.show(Controlling.this, "Hold on", "Connecting");// http://stackoverflow.com/a/11130220/1287554
-
         }
 
         @SuppressLint("MissingPermission") ///permission suppressed
@@ -313,12 +306,9 @@ public class Controlling extends Activity {
                     mBTSocket.connect();
                 }
             } catch (IOException e) {
-// Unable to connect to device`
+                // Unable to connect to device`
                 // e.printStackTrace();
                 mConnectSuccessful = false;
-
-
-
             }
             return null;
         }
@@ -335,10 +325,8 @@ public class Controlling extends Activity {
                 mIsBluetoothConnected = true;
                 mReadThread = new ReadInput(); // Kick off input reader
             }
-
             progressDialog.dismiss();
         }
-
     }
     @Override
     protected void onDestroy() {
