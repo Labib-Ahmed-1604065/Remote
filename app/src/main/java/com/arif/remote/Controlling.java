@@ -7,12 +7,17 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,7 +36,7 @@ public class Controlling extends Activity {
     private boolean mIsBluetoothConnected = false;
 
 
-    private Button mBtnDisconnect;
+    //private Button mBtnDisconnect;
     private BluetoothDevice mDevice;
 
     final static String forward="1";//forward
@@ -48,9 +53,13 @@ public class Controlling extends Activity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {//work at 164
+    protected void onCreate(Bundle savedInstanceState) {//work at 171
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_controlling);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            askPermission();
+        }
 
         ActivityHelper.initialize(this);
         // mBtnDisconnect = (Button) findViewById(R.id.btnDisconnect);
@@ -161,9 +170,24 @@ public class Controlling extends Activity {
         btnFloatingWidget.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                    startService(new Intent(Controlling.this, FloatingViewService.class));
+                    finish();
+                } else if (Settings.canDrawOverlays(Controlling.this)) {
+                    startService(new Intent(Controlling.this, FloatingViewService.class));
+                    finish();
+                } else {
+                    askPermission();
+                    Toast.makeText(Controlling.this, "You need System Alert Window Permission to do this", Toast.LENGTH_SHORT).show();
+                }
             }
         });
+    }
+
+    private void askPermission() {// permission for floating widget
+        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:" + getPackageName()));
+        startActivityForResult(intent, SYSTEM_ALERT_WINDOW_PERMISSION);
     }
 
     private class ReadInput implements Runnable {
