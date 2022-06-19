@@ -53,7 +53,7 @@ public class Controlling extends Activity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {//work at 171
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_controlling);
 

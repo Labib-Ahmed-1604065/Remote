@@ -1,21 +1,62 @@
 package com.arif.remote;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.graphics.PixelFormat;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.Toast;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.UUID;
 
 public class FloatingViewService extends Service implements View.OnClickListener {
 
+    private static final int SYSTEM_ALERT_WINDOW_PERMISSION = 2084;
 
     private WindowManager mWindowManager;
     private View mFloatingView;
     private View collapsedView;
     private View expandedView;
+
+    private static final String TAG = "BlueTest5-Controlling";
+    private int mMaxChars = 50000;//Default//change this to string..........
+    private UUID mDeviceUUID;
+    private BluetoothSocket mBTSocket;
+    //private Controlling.ReadInput mReadThread = null;
+
+    private boolean mIsUserInitiatedDisconnect = false;
+    private boolean mIsBluetoothConnected = false;
+
+    private BluetoothDevice mDevice;
+
+    final static String forward="1";//forward
+    final static String backward="2";//backward
+    final static String left="3";//left
+    final static String right="4";//right
+    final static String goUp="5";//goUp
+    final static String goDown="6";//goDown
+    final static String stop="0";//stop
+
+    private ProgressDialog progressDialog;
+    Button btnForward, btnBackward, btnLeft, btnRight, btnGoUp, btnGoDown, btnStop;
 
     public FloatingViewService() {
     }
@@ -29,6 +70,20 @@ public class FloatingViewService extends Service implements View.OnClickListener
     public void onCreate() {
         super.onCreate();
 
+        //button id with Button
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            askPermission();
+        }
+
+        //ActivityHelper.initialize(this);// why did I comment this? no Idea!
+        // mBtnDisconnect = (Button) findViewById(R.id.btnDisconnect);
+        btnForward =(Button) btnForward.findViewById(R.id.forward);
+        btnBackward =(Button) btnBackward.findViewById(R.id.backward);
+        btnLeft =(Button) btnLeft.findViewById(R.id.left);
+        btnRight =(Button) btnRight.findViewById(R.id.right);
+        btnGoUp =(Button) btnGoUp.findViewById(R.id.goUp);
+        btnGoDown =(Button) btnGoDown.findViewById(R.id.goDown);
+        btnStop =(Button) btnStop.findViewById(R.id.stop);
 
         //getting the widget layout from xml using layout inflater
         mFloatingView = LayoutInflater.from(this).inflate(R.layout.layout_floating_widget, null);
@@ -143,6 +198,102 @@ public class FloatingViewService extends Service implements View.OnClickListener
                     return false;
                 }
             });}
+
+        /////////////////////////////////////////////////////////////////////////////////////////////for Buttons
+        btnForward.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                try {
+                    mBTSocket.getOutputStream().write(forward.getBytes());
+
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }});
+
+        btnBackward.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                try {
+                    mBTSocket.getOutputStream().write(backward.getBytes());
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }});
+
+        btnLeft.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                try {
+                    mBTSocket.getOutputStream().write(left.getBytes());
+
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }});
+
+        btnRight.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                try {
+                    mBTSocket.getOutputStream().write(right.getBytes());
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }});
+
+        btnGoUp.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                try {
+                    mBTSocket.getOutputStream().write(goUp.getBytes());
+
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }});
+
+        btnGoDown.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                try {
+                    mBTSocket.getOutputStream().write(goDown.getBytes());
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }});
+
+        btnStop.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                try {
+                    mBTSocket.getOutputStream().write(stop.getBytes());
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }});
+    }
+
+
+    private void askPermission() {// permission for floating widget
+        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:" + getPackageName()));
+        //startActivityForResult(intent, SYSTEM_ALERT_WINDOW_PERMISSION);
+        startActivity(intent);
     }
 
     @Override
@@ -166,4 +317,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
                 break;
         }
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////copied from Controlling.java
+
 }
