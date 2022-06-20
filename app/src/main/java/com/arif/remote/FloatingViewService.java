@@ -52,7 +52,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
     final static String goDown="6";//goDown
     final static String stop="0";//stop
 
-    private ProgressDialog progressDialog;
+    //private ProgressDialog progressDialog;
     Button btnForward, btnBackward, btnLeft, btnRight, btnGoUp, btnGoDown, btnStop;
 
     public FloatingViewService() {
@@ -66,7 +66,8 @@ public class FloatingViewService extends Service implements View.OnClickListener
     @Override
     public void onCreate() {
         super.onCreate();
-        new ConnectBT().execute();
+        new ReadInput();
+        //new ConnectBT().execute();
         //setContentView(R.layout.layout_floating_widget);
         //button id with Button
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
@@ -297,9 +298,9 @@ public class FloatingViewService extends Service implements View.OnClickListener
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mBTSocket != null && mIsBluetoothConnected) {
+        /*if (mBTSocket != null && mIsBluetoothConnected) {
             new DisConnectBT().execute();
-        }
+        }*/
         if (mFloatingView != null) mWindowManager.removeView(mFloatingView);
     }
 
@@ -371,12 +372,12 @@ public class FloatingViewService extends Service implements View.OnClickListener
         }
     }
 
-    private class ConnectBT extends AsyncTask<Void, Void, Void> {
+    /*private class ConnectBT extends AsyncTask<Void, Void, Void> {
         private boolean mConnectSuccessful = true;
 
         @Override
         protected void onPreExecute() {
-            progressDialog = ProgressDialog.show(FloatingViewService.this, "Hold on", "Connecting");// http://stackoverflow.com/a/11130220/1287554
+            //progressDialog = ProgressDialog.show(FloatingViewService.this, "Hold on", "Connecting");// http://stackoverflow.com/a/11130220/1287554
         }
 
         @SuppressLint("MissingPermission") ///permission suppressed
@@ -410,14 +411,14 @@ public class FloatingViewService extends Service implements View.OnClickListener
             {
                 Toast.makeText(getApplicationContext(), "Could not connect to device.Please turn on your Hardware", Toast.LENGTH_LONG).show();
             }
-            /*if (!mConnectSuccessful) {
+            if (!mConnectSuccessful) {
                 Toast.makeText(getApplicationContext(), "Could not connect to device.Please turn on your Hardware", Toast.LENGTH_LONG).show();
                 finish();
             } else {
-                //msg("Connected to device");
+                msg("Connected to device");
                 mIsBluetoothConnected = true;
                 mReadThread = new ReadInput(); // Kick off input reader
-            }*/
+            }
             progressDialog.dismiss();
         }
     }
@@ -442,7 +443,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
             try {
                 mBTSocket.close();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
+                 T-ODO Auto-generated catch block
                 e.printStackTrace();
             }
             return null;
@@ -453,8 +454,8 @@ public class FloatingViewService extends Service implements View.OnClickListener
             super.onPostExecute(result);
             mIsBluetoothConnected = false;
             if (mIsUserInitiatedDisconnect) {
-                //finish();
+                finish();
             }
         }
-    }
+    }*/
 }
