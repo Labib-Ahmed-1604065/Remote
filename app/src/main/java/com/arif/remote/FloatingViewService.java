@@ -1,30 +1,22 @@
 package com.arif.remote;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.app.Service;
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.Toast;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.UUID;
 
 public class FloatingViewService extends Service implements View.OnClickListener {
@@ -69,24 +61,25 @@ public class FloatingViewService extends Service implements View.OnClickListener
     @Override
     public void onCreate() {
         super.onCreate();
-
+        //setContentView(R.layout.layout_floating_widget);
         //button id with Button
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
             askPermission();
         }
-
-        //ActivityHelper.initialize(this);// why did I comment this? no Idea!
-        // mBtnDisconnect = (Button) findViewById(R.id.btnDisconnect);
-        btnForward =(Button) btnForward.findViewById(R.id.forward);
-        btnBackward =(Button) btnBackward.findViewById(R.id.backward);
-        btnLeft =(Button) btnLeft.findViewById(R.id.left);
-        btnRight =(Button) btnRight.findViewById(R.id.right);
-        btnGoUp =(Button) btnGoUp.findViewById(R.id.goUp);
-        btnGoDown =(Button) btnGoDown.findViewById(R.id.goDown);
-        btnStop =(Button) btnStop.findViewById(R.id.stop);
-
         //getting the widget layout from xml using layout inflater
         mFloatingView = LayoutInflater.from(this).inflate(R.layout.layout_floating_widget, null);
+
+        //ActivityHelper.initialize(this);
+        // mBtnDisconnect = (Button) findViewById(R.id.btnDisconnect);
+
+        btnForward =(Button) mFloatingView.findViewById(R.id.forward);
+        btnBackward =(Button) mFloatingView.findViewById(R.id.backward);
+        btnLeft =(Button) mFloatingView.findViewById(R.id.left);
+        btnRight =(Button) mFloatingView.findViewById(R.id.right);
+        btnGoUp =(Button) mFloatingView.findViewById(R.id.goUp);
+        btnGoDown =(Button) mFloatingView.findViewById(R.id.goDown);
+        btnStop =(Button) mFloatingView.findViewById(R.id.stop);
+
 
         //https://github.com/ahmedwahba/cordova-plugin-drawoverapps/issues/11
         //setting the layout parameters

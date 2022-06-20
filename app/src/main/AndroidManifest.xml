@@ -32,6 +32,7 @@
         </activity>
         <activity android:name=".Controlling"/>
         <activity android:name=".PreferencesActivity"/>
+        <service android:name=".FloatingViewService" />
     </application>
 
 </manifest>
