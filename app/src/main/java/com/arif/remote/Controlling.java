@@ -283,9 +283,9 @@ public class Controlling extends Activity {
 
     @Override
     protected void onPause() {
-        /*if (mBTSocket != null && mIsBluetoothConnected) {
+        if (mBTSocket != null && mIsBluetoothConnected) {
             new DisConnectBT().execute();
-        }*/
+        }
         Log.d(TAG, "Paused");
         super.onPause();
     }
