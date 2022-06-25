@@ -300,7 +300,6 @@ public class MainActivity extends AppCompatActivity {
 
             return vi;
         }
-
     }
 
     @Override
