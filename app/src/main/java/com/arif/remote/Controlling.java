@@ -36,9 +36,7 @@ public class Controlling extends Activity {
     private boolean mIsUserInitiatedDisconnect = false;
     private boolean mIsBluetoothConnected = false;
 
-
-    //private Button mBtnDisconnect;
-    private BluetoothDevice mDevice;
+    public BluetoothDevice mDevice;
 
     final static String forward="70";//forward-F
     final static String backward="66";//backward-B
@@ -178,12 +176,18 @@ public class Controlling extends Activity {
             @Override
             public void onClick(View view) {
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                    /*Intent intent1 = new Intent(new Intent(Controlling.this, FloatingViewService.class));
-                    startService(intent1);*/
-                    startService(new Intent(Controlling.this, FloatingViewService.class));
+                    Intent intent1 = new Intent(new Intent(Controlling.this, FloatingViewService.class));
+                    intent1.putExtra("mDevice", mDevice);
+                    intent1.putExtra("mDeviceUUID", mDeviceUUID);
+                    startService(intent1);
+                    //startService(new Intent(Controlling.this, FloatingViewService.class));
                     finish();
                 } else if (Settings.canDrawOverlays(Controlling.this)) {
-                    startService(new Intent(Controlling.this, FloatingViewService.class));
+                    Intent intent1 = new Intent(new Intent(Controlling.this, FloatingViewService.class));
+                    intent1.putExtra("mDevice", mDevice);
+                    intent1.putExtra("mDeviceUUID", mDeviceUUID);
+                    startService(intent1);
+                    //startService(new Intent(Controlling.this, FloatingViewService.class));
                     finish();
                 } else {
                     askPermission();

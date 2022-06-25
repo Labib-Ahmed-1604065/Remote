@@ -7,9 +7,9 @@ import android.util.Log;
 import java.util.UUID;
 
 public class SocketHelper extends Thread {
-    private BluetoothDevice mDevice;
-    private BluetoothSocket superSocket;
-    private UUID mDeviceUUID;
+    public BluetoothDevice mDevice;
+    //private BluetoothSocket superSocket;
+    public UUID mDeviceUUID;
     private static final String TAG = "BlueTest5-Controlling-Looooooooooooooooooooooooooooooooooog";
 
     public BluetoothDevice getmDevice() {
@@ -21,13 +21,13 @@ public class SocketHelper extends Thread {
         Log.d(TAG, String.valueOf(this.mDevice));
     }
 
-    public BluetoothSocket getSuperSocket() {
+    /*public BluetoothSocket getSuperSocket() {
         return superSocket;
     }
 
     public void setSuperSocket(BluetoothSocket superSocket) {
         this.superSocket = superSocket;
-    }
+    }*/
 
     public UUID getmDeviceUUID() {
         return mDeviceUUID;

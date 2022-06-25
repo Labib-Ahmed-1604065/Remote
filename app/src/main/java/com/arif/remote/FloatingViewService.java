@@ -10,6 +10,7 @@ import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.view.LayoutInflater;
@@ -38,9 +39,9 @@ public class FloatingViewService extends Service implements View.OnClickListener
     //private BluetoothSocket mBTSocket;
     /** socketConnect*/
     SocketHelper helpMe = new SocketHelper();
-    public BluetoothDevice mDevice = helpMe.getmDevice();
+    public BluetoothDevice mDevice;// = helpMe.getmDevice();
     public BluetoothSocket mBTSocket;// = helpMe.getSuperSocket();
-    public UUID mDeviceUUID = helpMe.getmDeviceUUID();
+    public UUID mDeviceUUID;// = helpMe.getmDeviceUUID();
     /** socketConnect*/
     private ReadInput mReadThread = null;
 
@@ -73,6 +74,12 @@ public class FloatingViewService extends Service implements View.OnClickListener
     public void onCreate() {
         super.onCreate();
         //new ReadInput();
+        //mDevice = helpMe.getmDevice();
+        //mDeviceUUID = helpMe.getmDeviceUUID();
+        //Intent intent; intent.getIntent();
+        Controlling getIt = new Controlling();
+        mDevice = getIt.mDevice;
+        mDeviceUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
         if (mBTSocket == null || !mIsBluetoothConnected) {
             new ConnectBT().execute();
         }
