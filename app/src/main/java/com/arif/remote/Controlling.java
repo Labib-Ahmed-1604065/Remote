@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.UUID;
 
 public class Controlling extends Activity {
@@ -29,7 +30,7 @@ public class Controlling extends Activity {
     private static final String TAG = "BlueTest5-Controlling";
     private int mMaxChars = 50000;//Default//change this to string..........
     private UUID mDeviceUUID;
-    private BluetoothSocket mBTSocket;
+    public BluetoothSocket mBTSocket;
     private ReadInput mReadThread = null;
 
     private boolean mIsUserInitiatedDisconnect = false;
@@ -39,13 +40,13 @@ public class Controlling extends Activity {
     //private Button mBtnDisconnect;
     private BluetoothDevice mDevice;
 
-    final static String forward="1";//forward
-    final static String backward="2";//backward
-    final static String left="3";//left
-    final static String right="4";//right
-    final static String goUp="5";//goUp
-    final static String goDown="6";//goDown
-    final static String stop="0";//stop
+    final static String forward="70";//forward-F
+    final static String backward="66";//backward-B
+    final static String left="76";//left-L
+    final static String right="82";//right-R
+    final static String goUp="85";//goUp-U
+    final static String goDown="68";//goDown-D
+    final static String stop="83";//stop-S
 
 
     private ProgressDialog progressDialog;
@@ -79,6 +80,12 @@ public class Controlling extends Activity {
         mMaxChars = b.getInt(MainActivity.BUFFER_SIZE);
 
         Log.d(TAG, "Ready");
+        /** socketConnect*/
+        SocketHelper helpMe = new SocketHelper();
+        helpMe.setmDevice(mDevice);
+        //helpMe.setSuperSocket(mBTSocket);
+        helpMe.setmDeviceUUID(mDeviceUUID);
+        /** socketConnect*/
 
         btnForward.setOnClickListener(new View.OnClickListener()
         {
@@ -171,6 +178,8 @@ public class Controlling extends Activity {
             @Override
             public void onClick(View view) {
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                    /*Intent intent1 = new Intent(new Intent(Controlling.this, FloatingViewService.class));
+                    startService(intent1);*/
                     startService(new Intent(Controlling.this, FloatingViewService.class));
                     finish();
                 } else if (Settings.canDrawOverlays(Controlling.this)) {
@@ -183,6 +192,7 @@ public class Controlling extends Activity {
             }
         });
     }
+
 
     private void askPermission() {// permission for floating widget
         Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,

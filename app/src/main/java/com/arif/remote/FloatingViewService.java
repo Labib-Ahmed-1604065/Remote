@@ -1,7 +1,6 @@
 package com.arif.remote;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -33,24 +32,31 @@ public class FloatingViewService extends Service implements View.OnClickListener
     private View collapsedView;
     private View expandedView;
 
-    private static final String TAG = "BlueTest5-Controlling";
+    //private static final String TAG = "BlueTest5-Controlling-Service";
     private int mMaxChars = 50000;//Default//change this to string..........
-    private UUID mDeviceUUID;
-    private BluetoothSocket mBTSocket;
+
+    //private BluetoothSocket mBTSocket;
+    /** socketConnect*/
+    SocketHelper helpMe = new SocketHelper();
+    public BluetoothDevice mDevice = helpMe.getmDevice();
+    public BluetoothSocket mBTSocket;// = helpMe.getSuperSocket();
+    public UUID mDeviceUUID = helpMe.getmDeviceUUID();
+    /** socketConnect*/
     private ReadInput mReadThread = null;
+
 
     private boolean mIsUserInitiatedDisconnect = false;
     private boolean mIsBluetoothConnected = false;
 
-    private BluetoothDevice mDevice;
 
-    final static String forward="1";//forward
-    final static String backward="2";//backward
-    final static String left="3";//left
-    final static String right="4";//right
-    final static String goUp="5";//goUp
-    final static String goDown="6";//goDown
-    final static String stop="0";//stop
+
+    final static String forward="70";//forward-F
+    final static String backward="66";//backward-B
+    final static String left="76";//left-L
+    final static String right="82";//right-R
+    final static String goUp="85";//goUp-U
+    final static String goDown="68";//goDown-D
+    final static String stop="83";//stop-S
 
     //private ProgressDialog progressDialog;
     Button btnForward, btnBackward, btnLeft, btnRight, btnGoUp, btnGoDown, btnStop;
@@ -66,8 +72,10 @@ public class FloatingViewService extends Service implements View.OnClickListener
     @Override
     public void onCreate() {
         super.onCreate();
-        new ReadInput();
-        //new ConnectBT().execute();
+        //new ReadInput();
+        if (mBTSocket == null || !mIsBluetoothConnected) {
+            new ConnectBT().execute();
+        }
         //setContentView(R.layout.layout_floating_widget);
         //button id with Button
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
@@ -75,6 +83,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
         }
         //getting the widget layout from xml using layout inflater
         mFloatingView = LayoutInflater.from(this).inflate(R.layout.layout_floating_widget, null);
+
 
         //ActivityHelper.initialize(this);
         // mBtnDisconnect = (Button) findViewById(R.id.btnDisconnect);
@@ -372,7 +381,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
         }
     }
 
-    /*private class ConnectBT extends AsyncTask<Void, Void, Void> {
+    private class ConnectBT extends AsyncTask<Void, Void, Void> {
         private boolean mConnectSuccessful = true;
 
         @Override
@@ -413,16 +422,20 @@ public class FloatingViewService extends Service implements View.OnClickListener
             }
             if (!mConnectSuccessful) {
                 Toast.makeText(getApplicationContext(), "Could not connect to device.Please turn on your Hardware", Toast.LENGTH_LONG).show();
-                finish();
+                //finish();
             } else {
                 msg("Connected to device");
                 mIsBluetoothConnected = true;
                 mReadThread = new ReadInput(); // Kick off input reader
             }
-            progressDialog.dismiss();
+            //progressDialog.dismiss();
         }
     }
 
+    private void msg(String s) {
+        Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+    }
+/*
     private class DisConnectBT extends AsyncTask<Void, Void, Void> {
 
         @Override
