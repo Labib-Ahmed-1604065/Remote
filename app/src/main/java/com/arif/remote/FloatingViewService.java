@@ -17,7 +17,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -60,7 +60,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
     final static String stop="83";//stop-S
 
     //private ProgressDialog progressDialog;
-    Button btnForward, btnBackward, btnLeft, btnRight, btnGoUp, btnGoDown, btnStop;
+    ImageButton btnForward, btnBackward, btnLeft, btnRight, btnGoUp, btnGoDown, btnStop;
 
     public FloatingViewService() {
     }
@@ -124,13 +124,13 @@ public class FloatingViewService extends Service implements View.OnClickListener
         //ActivityHelper.initialize(this);
         // mBtnDisconnect = (Button) findViewById(R.id.btnDisconnect);
 
-        btnForward =(Button) mFloatingView.findViewById(R.id.forward);
-        btnBackward =(Button) mFloatingView.findViewById(R.id.backward);
-        btnLeft =(Button) mFloatingView.findViewById(R.id.left);
-        btnRight =(Button) mFloatingView.findViewById(R.id.right);
-        btnGoUp =(Button) mFloatingView.findViewById(R.id.goUp);
-        btnGoDown =(Button) mFloatingView.findViewById(R.id.goDown);
-        btnStop =(Button) mFloatingView.findViewById(R.id.stop);
+        btnForward =(ImageButton) mFloatingView.findViewById(R.id.forward);
+        btnBackward =(ImageButton) mFloatingView.findViewById(R.id.backward);
+        btnLeft =(ImageButton) mFloatingView.findViewById(R.id.left);
+        btnRight =(ImageButton) mFloatingView.findViewById(R.id.right);
+        btnGoUp =(ImageButton) mFloatingView.findViewById(R.id.goUp);
+        btnGoDown =(ImageButton) mFloatingView.findViewById(R.id.goDown);
+        btnStop =(ImageButton) mFloatingView.findViewById(R.id.stop);
 
 
         //https://github.com/ahmedwahba/cordova-plugin-drawoverapps/issues/11
