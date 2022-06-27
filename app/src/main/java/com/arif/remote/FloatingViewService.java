@@ -38,13 +38,13 @@ public class FloatingViewService extends Service implements View.OnClickListener
 
     //private BluetoothSocket mBTSocket;
     /** socketConnect*/
-    SocketHelper helpMe = new SocketHelper();
+    //SocketHelper helpMe = new SocketHelper();
     public BluetoothDevice mDevice;// = helpMe.getmDevice();
     public BluetoothSocket mBTSocket;// = helpMe.getSuperSocket();
     public UUID mDeviceUUID;// = helpMe.getmDeviceUUID();
     /** socketConnect*/
     private ReadInput mReadThread = null;
-
+    //private final IBinder binder = new LocalBinder();
 
     private boolean mIsUserInitiatedDisconnect = false;
     private boolean mIsBluetoothConnected = false;
@@ -67,26 +67,55 @@ public class FloatingViewService extends Service implements View.OnClickListener
 
     @Override
     public IBinder onBind(Intent intent) {
+        /*Bundle b=intent.getExtras();
+        mDevice=b.getParcelable("mDevice");
+        mDeviceUUID=b.getParcelable("mDeviceUUID");
+        wip welp=new wip();
+        welp.setmDeviceUUID(mDeviceUUID);
+        welp.setmDevice(mDevice);
+        return binder;*/
         return null;
     }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-        //new ReadInput();
-        //mDevice = helpMe.getmDevice();
-        //mDeviceUUID = helpMe.getmDeviceUUID();
-        //Intent intent; intent.getIntent();
-        Controlling getIt = new Controlling();
-        mDevice = getIt.mDevice;
-        mDeviceUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-        if (mBTSocket == null || !mIsBluetoothConnected) {
-            new ConnectBT().execute();
+    public void onTaskRemoved(Intent rootIntent) {
+        Intent restartServiceIntent = new Intent(getApplicationContext(),this.getClass());
+        restartServiceIntent.setPackage(getPackageName());
+        startService(restartServiceIntent);
+        super.onTaskRemoved(rootIntent);
+    }
+
+    /*public class LocalBinder extends Binder {
+        FloatingViewService getService() {
+            // Return this instance of LocalService so clients can call public methods
+            return FloatingViewService.this;
         }
+    }*/
+    @Override
+    public int onStartCommand (Intent intent, int flags, int startId) {
+        super.onCreate();
+        //Intent intent = getIntent();
+        Bundle b = intent.getExtras();
+        mDevice = b.getParcelable("mDevice");
+        mDeviceUUID = UUID.fromString(b.getString("mDeviceUUID"));
+
+        /*return Service.START_STICKY;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();*/
+
+        //new ReadInput();
+
         //setContentView(R.layout.layout_floating_widget);
         //button id with Button
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
             askPermission();
+        }
+
+        if (mBTSocket == null || !mIsBluetoothConnected) {
+            new ConnectBT().execute();
         }
         //getting the widget layout from xml using layout inflater
         mFloatingView = LayoutInflater.from(this).inflate(R.layout.layout_floating_widget, null);
@@ -302,6 +331,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
                     e.printStackTrace();
                 }
             }});
+        return Service.START_STICKY;
     }
 
     private void askPermission() {// permission for floating widget
@@ -330,6 +360,9 @@ public class FloatingViewService extends Service implements View.OnClickListener
                 break;
 
             case R.id.buttonClose:
+                if (mBTSocket != null && mIsBluetoothConnected) {
+                    new DisConnectBT().execute();
+                }
                 //closing the widget
                 stopSelf();
                 break;
@@ -399,7 +432,6 @@ public class FloatingViewService extends Service implements View.OnClickListener
         @SuppressLint("MissingPermission") ///permission suppressed
         @Override
         protected Void doInBackground(Void... devices) {
-
             try {
                 if (mBTSocket == null || !mIsBluetoothConnected) {
                     mBTSocket = mDevice.createInsecureRfcommSocketToServiceRecord(mDeviceUUID);
@@ -442,7 +474,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
     private void msg(String s) {
         Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
     }
-/*
+
     private class DisConnectBT extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -463,7 +495,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
             try {
                 mBTSocket.close();
             } catch (IOException e) {
-                 T-ODO Auto-generated catch block
+                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             return null;
@@ -474,8 +506,8 @@ public class FloatingViewService extends Service implements View.OnClickListener
             super.onPostExecute(result);
             mIsBluetoothConnected = false;
             if (mIsUserInitiatedDisconnect) {
-                finish();
+                //finish();
             }
         }
-    }*/
+    }
 }

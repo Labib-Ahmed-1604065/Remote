@@ -78,7 +78,7 @@ public class Controlling extends Activity {
         mMaxChars = b.getInt(MainActivity.BUFFER_SIZE);
 
         Log.d(TAG, "Ready");
-        /** socketConnect*/
+        /* socketConnect
         SocketHelper helpMe = new SocketHelper();
         helpMe.setmDevice(mDevice);
         //helpMe.setSuperSocket(mBTSocket);
@@ -175,17 +175,20 @@ public class Controlling extends Activity {
         btnFloatingWidget.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (mBTSocket != null && mIsBluetoothConnected) {
+                    new DisConnectBT().execute();
+                }
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                     Intent intent1 = new Intent(new Intent(Controlling.this, FloatingViewService.class));
                     intent1.putExtra("mDevice", mDevice);
-                    intent1.putExtra("mDeviceUUID", mDeviceUUID);
+                    intent1.putExtra("mDeviceUUID", mDeviceUUID.toString());
                     startService(intent1);
                     //startService(new Intent(Controlling.this, FloatingViewService.class));
                     finish();
                 } else if (Settings.canDrawOverlays(Controlling.this)) {
                     Intent intent1 = new Intent(new Intent(Controlling.this, FloatingViewService.class));
                     intent1.putExtra("mDevice", mDevice);
-                    intent1.putExtra("mDeviceUUID", mDeviceUUID);
+                    intent1.putExtra("mDeviceUUID", mDeviceUUID.toString());
                     startService(intent1);
                     //startService(new Intent(Controlling.this, FloatingViewService.class));
                     finish();
@@ -297,9 +300,9 @@ public class Controlling extends Activity {
 
     @Override
     protected void onPause() {
-        /*if (mBTSocket != null && mIsBluetoothConnected) {
+        if (mBTSocket != null && mIsBluetoothConnected) {
             new DisConnectBT().execute();
-        }*/
+        }
         Log.d(TAG, "Paused");
         super.onPause();
     }
