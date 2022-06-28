@@ -7,11 +7,14 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -19,30 +22,30 @@ import java.io.InputStream;
 import java.util.UUID;
 
 public class Controlling extends Activity {
+    private static final int SYSTEM_ALERT_WINDOW_PERMISSION = 2084;
+
     private static final String TAG = "BlueTest5-Controlling";
     private int mMaxChars = 50000;//Default//change this to string..........
     private UUID mDeviceUUID;
-    private BluetoothSocket mBTSocket;
+    public BluetoothSocket mBTSocket;
     private ReadInput mReadThread = null;
 
     private boolean mIsUserInitiatedDisconnect = false;
     private boolean mIsBluetoothConnected = false;
 
+    public BluetoothDevice mDevice;
 
-    private Button mBtnDisconnect;
-    private BluetoothDevice mDevice;
-
-    final static String forward="1";//forward
-    final static String backward="2";//backward
-    final static String left="3";//left
-    final static String right="4";//right
-    final static String goUp="5";//goUp
-    final static String goDown="6";//goDown
-    final static String stop="0";//stop
+    final static String forward="F";//forward-F
+    final static String backward="B";//backward-B
+    final static String left="L";//left-L
+    final static String right="R";//right-R
+    final static String goUp="U";//goUp-U
+    final static String goDown="D";//goDown-D
+    final static String stop="S";//stop-S
 
 
     private ProgressDialog progressDialog;
-    Button btnForward, btnBackward, btnLeft, btnRight, btnGoUp, btnGoDown, btnStop;
+    ImageButton btnForward, btnBackward, btnLeft, btnRight, btnGoUp, btnGoDown, btnStop, btnFloatingWidget;
 
 
     @Override
@@ -50,18 +53,20 @@ public class Controlling extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_controlling);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            askPermission();
+        }
+
         ActivityHelper.initialize(this);
         // mBtnDisconnect = (Button) findViewById(R.id.btnDisconnect);
-        btnForward =(Button)findViewById(R.id.forward);
-        btnBackward =(Button)findViewById(R.id.backward);
-        btnLeft =(Button)findViewById(R.id.left);
-        btnRight =(Button)findViewById(R.id.right);
-        btnGoUp =(Button)findViewById(R.id.goUp);
-        btnGoDown =(Button)findViewById(R.id.goDown);
-        btnStop =(Button)findViewById(R.id.stop);
-
-
-
+        btnForward =(ImageButton)findViewById(R.id.forward);
+        btnBackward =(ImageButton)findViewById(R.id.backward);
+        btnLeft =(ImageButton)findViewById(R.id.left);
+        btnRight =(ImageButton)findViewById(R.id.right);
+        btnGoUp =(ImageButton)findViewById(R.id.goUp);
+        btnGoDown =(ImageButton)findViewById(R.id.goDown);
+        btnStop =(ImageButton)findViewById(R.id.stop);
+        btnFloatingWidget =(ImageButton)findViewById(R.id.buttonCreateWidget);
 
         Intent intent = getIntent();
         Bundle b = intent.getExtras();
@@ -70,10 +75,12 @@ public class Controlling extends Activity {
         mMaxChars = b.getInt(MainActivity.BUFFER_SIZE);
 
         Log.d(TAG, "Ready");
-
-
-
-
+        /* socketConnect
+        SocketHelper helpMe = new SocketHelper();
+        helpMe.setmDevice(mDevice);
+        //helpMe.setSuperSocket(mBTSocket);
+        helpMe.setmDeviceUUID(mDeviceUUID);
+        /** socketConnect*/
 
         btnForward.setOnClickListener(new View.OnClickListener()
         {
@@ -161,6 +168,40 @@ public class Controlling extends Activity {
                     e.printStackTrace();
                 }
             }});
+
+        btnFloatingWidget.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mBTSocket != null && mIsBluetoothConnected) {
+                    new DisConnectBT().execute();
+                }
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                    Intent intent1 = new Intent(new Intent(Controlling.this, FloatingViewService.class));
+                    intent1.putExtra("mDevice", mDevice);
+                    intent1.putExtra("mDeviceUUID", mDeviceUUID.toString());
+                    startService(intent1);
+                    //startService(new Intent(Controlling.this, FloatingViewService.class));
+                    finish();
+                } else if (Settings.canDrawOverlays(Controlling.this)) {
+                    Intent intent1 = new Intent(new Intent(Controlling.this, FloatingViewService.class));
+                    intent1.putExtra("mDevice", mDevice);
+                    intent1.putExtra("mDeviceUUID", mDeviceUUID.toString());
+                    startService(intent1);
+                    //startService(new Intent(Controlling.this, FloatingViewService.class));
+                    finish();
+                } else {
+                    askPermission();
+                    Toast.makeText(Controlling.this, "You need System Alert Window Permission to do this", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+
+    private void askPermission() {// permission for floating widget
+        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:" + getPackageName()));
+        startActivityForResult(intent, SYSTEM_ALERT_WINDOW_PERMISSION);
     }
 
     private class ReadInput implements Runnable {
@@ -198,26 +239,20 @@ public class Controlling extends Activity {
                         /*
                          * If checked then receive text, better design would probably be to stop thread if unchecked and free resources, but this is a quick fix
                          */
-
-
-
                     }
                     Thread.sleep(500);
                 }
             } catch (IOException e) {
-// TODO Auto-generated catch block
+                    // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (InterruptedException e) {
-// TODO Auto-generated catch block
+                    // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-
         }
-
         public void stop() {
             bStop = true;
         }
-
     }
 
     private class DisConnectBT extends AsyncTask<Void, Void, Void> {
@@ -227,7 +262,7 @@ public class Controlling extends Activity {
         }
 
         @Override
-        protected Void doInBackground(Void... params) {//cant inderstand these dotss
+        protected Void doInBackground(Void... params) {//can't understand these dots
 
             if (mReadThread != null) {
                 mReadThread.stop();
@@ -240,10 +275,9 @@ public class Controlling extends Activity {
             try {
                 mBTSocket.close();
             } catch (IOException e) {
-// TODO Auto-generated catch block
+                    // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-
             return null;
         }
 
@@ -255,7 +289,6 @@ public class Controlling extends Activity {
                 finish();
             }
         }
-
     }
 
     private void msg(String s) {
@@ -297,9 +330,7 @@ public class Controlling extends Activity {
 
         @Override
         protected void onPreExecute() {
-
             progressDialog = ProgressDialog.show(Controlling.this, "Hold on", "Connecting");// http://stackoverflow.com/a/11130220/1287554
-
         }
 
         @SuppressLint("MissingPermission") ///permission suppressed
@@ -313,12 +344,9 @@ public class Controlling extends Activity {
                     mBTSocket.connect();
                 }
             } catch (IOException e) {
-// Unable to connect to device`
+                // Unable to connect to device`
                 // e.printStackTrace();
                 mConnectSuccessful = false;
-
-
-
             }
             return null;
         }
@@ -335,10 +363,8 @@ public class Controlling extends Activity {
                 mIsBluetoothConnected = true;
                 mReadThread = new ReadInput(); // Kick off input reader
             }
-
             progressDialog.dismiss();
         }
-
     }
     @Override
     protected void onDestroy() {
