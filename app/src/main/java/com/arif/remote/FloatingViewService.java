@@ -51,13 +51,13 @@ public class FloatingViewService extends Service implements View.OnClickListener
 
 
 
-    final static String forward="70";//forward-F
-    final static String backward="66";//backward-B
-    final static String left="76";//left-L
-    final static String right="82";//right-R
-    final static String goUp="85";//goUp-U
-    final static String goDown="68";//goDown-D
-    final static String stop="83";//stop-S
+    final static String forward="F";//forward-F
+    final static String backward="B";//backward-B
+    final static String left="L";//left-L
+    final static String right="R";//right-R
+    final static String goUp="U";//goUp-U
+    final static String goDown="D";//goDown-D
+    final static String stop="S";//stop-S
 
     //private ProgressDialog progressDialog;
     ImageButton btnForward, btnBackward, btnLeft, btnRight, btnGoUp, btnGoDown, btnStop;

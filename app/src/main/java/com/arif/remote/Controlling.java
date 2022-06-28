@@ -14,14 +14,11 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.UUID;
 
 public class Controlling extends Activity {
@@ -38,17 +35,17 @@ public class Controlling extends Activity {
 
     public BluetoothDevice mDevice;
 
-    final static String forward="70";//forward-F
-    final static String backward="66";//backward-B
-    final static String left="76";//left-L
-    final static String right="82";//right-R
-    final static String goUp="85";//goUp-U
-    final static String goDown="68";//goDown-D
-    final static String stop="83";//stop-S
+    final static String forward="F";//forward-F
+    final static String backward="B";//backward-B
+    final static String left="L";//left-L
+    final static String right="R";//right-R
+    final static String goUp="U";//goUp-U
+    final static String goDown="D";//goDown-D
+    final static String stop="S";//stop-S
 
 
     private ProgressDialog progressDialog;
-    Button btnForward, btnBackward, btnLeft, btnRight, btnGoUp, btnGoDown, btnStop, btnFloatingWidget;
+    ImageButton btnForward, btnBackward, btnLeft, btnRight, btnGoUp, btnGoDown, btnStop, btnFloatingWidget;
 
 
     @Override
@@ -62,14 +59,14 @@ public class Controlling extends Activity {
 
         ActivityHelper.initialize(this);
         // mBtnDisconnect = (Button) findViewById(R.id.btnDisconnect);
-        btnForward =(Button)findViewById(R.id.forward);
-        btnBackward =(Button)findViewById(R.id.backward);
-        btnLeft =(Button)findViewById(R.id.left);
-        btnRight =(Button)findViewById(R.id.right);
-        btnGoUp =(Button)findViewById(R.id.goUp);
-        btnGoDown =(Button)findViewById(R.id.goDown);
-        btnStop =(Button)findViewById(R.id.stop);
-        btnFloatingWidget =(Button)findViewById(R.id.buttonCreateWidget);
+        btnForward =(ImageButton)findViewById(R.id.forward);
+        btnBackward =(ImageButton)findViewById(R.id.backward);
+        btnLeft =(ImageButton)findViewById(R.id.left);
+        btnRight =(ImageButton)findViewById(R.id.right);
+        btnGoUp =(ImageButton)findViewById(R.id.goUp);
+        btnGoDown =(ImageButton)findViewById(R.id.goDown);
+        btnStop =(ImageButton)findViewById(R.id.stop);
+        btnFloatingWidget =(ImageButton)findViewById(R.id.buttonCreateWidget);
 
         Intent intent = getIntent();
         Bundle b = intent.getExtras();
